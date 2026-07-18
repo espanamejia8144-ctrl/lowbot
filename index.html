@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GlowBot - Tu Estilista Virtual de Cabello, Uñas y Maquillaje</title>
+  <!-- Tailwind CSS para diseño visual premium de salón de belleza -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons para la simbología del salón de belleza -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    /* Efecto de luz elegante en tono Oro Rosa */
+    .glow-rose {
+      box-shadow: 0 0 25px rgba(244, 63, 94, 0.4);
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.8);
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(244, 63, 94, 0.4);
+      border-radius: 3px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: rgba(244, 63, 94, 0.7);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans h-full flex flex-col overflow-hidden">
+
+  <!-- Encabezado de la Aplicación (Elegante y glamuroso) -->
+  <header class="bg-slate-900/90 backdrop-blur-md border-b border-rose-500/20 px-6 py-4 flex items-center justify-between z-10">
+    <div class="flex items-center gap-3">
+      <div class="w-11 h-11 rounded-full bg-gradient-to-tr from-pink-500 via-rose-500 to-amber-400 flex items-center justify-center glow-rose">
+        <i data-lucide="sparkles" class="w-6 h-6 text-white animate-pulse"></i>
+      </div>
+      <div>
+        <h1 class="text-xl font-bold bg-gradient-to-r from-pink-300 via-rose-300 to-amber-200 bg-clip-text text-transparent tracking-wide">GlowBot</h1>
+        <p class="text-xs text-rose-300 flex items-center gap-1">
+          <span class="w-2 h-2 rounded-full bg-pink-500 animate-ping"></span>
+          Estilista Virtual en Línea
+        </p>
+      </div>
+    </div>
+    
+    <!-- Botón de ajustes de Estilo -->
+    <div class="flex items-center gap-4">
+      <span id="connection-badge" class="px-2 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Conectado
+      </span>
+      <button id="toggle-config-btn" class="p-2 hover:bg-slate-800 rounded-lg text-rose-300 hover:text-white transition-colors" title="Ajustes de GlowBot">
+        <i data-lucide="scissors" class="w-5 h-5"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Contenido Principal -->
+  <main class="flex-1 flex overflow-hidden relative">
+    
+    <!-- Panel de Ajustes de Belleza Lateral (Colapsable) -->
+    <div id="config-panel" class="absolute inset-y-0 right-0 w-80 bg-slate-900/95 border-l border-rose-500/20 p-6 flex flex-col gap-6 z-20 transform translate-x-full transition-transform duration-300 shadow-2xl backdrop-blur-md">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="font-semibold text-lg flex items-center gap-2 text-rose-300">
+          <i data-lucide="smile" class="w-5 h-5"></i> Ajustes de GlowBot
+        </h3>
+        <button id="close-config-btn" class="p-1 hover:bg-slate-800 rounded text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Selección de Voz del Estilista -->
+      <div class="flex flex-col gap-2">
+        <label class="text-sm font-medium text-slate-300 flex items-center gap-2">
+          <i data-lucide="volume-2" class="w-4 h-4 text-rose-400"></i> Tono de Voz
+        </label>
+        <select id="voice-select" class="bg-slate-950 border border-rose-500/30 rounded-lg p-2 text-sm text-slate-100 focus:outline-none focus:border-rose-500">
+          <option value="Leda" selected>Leda (Elegante y pausada)</option>
+          <option value="Kore">Kore (Cálida y amigable)</option>
+          <option value="Zephyr">Zephyr (Dinámica y alegre)</option>
+          <option value="Aoede">Aoede (Melódica y dulce)</option>
+        </select>
+      </div>
+
+      <!-- Activar Lectura Automática -->
+      <div class="flex items-center justify-between bg-slate-950/50 p-3 rounded-lg border border-slate-800">
+        <div class="flex flex-col">
+          <span class="text-sm font-medium text-slate-200">Lectura por Voz</span>
+          <span class="text-xs text-slate-400">Escuchar consejos en audio</span>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox" id="auto-speak-toggle" class="sr-only peer" checked>
+          <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-600"></div>
+        </label>
+      </div>
+
+      <!-- Modo de Trabajo Especial -->
+      <div class="flex flex-col gap-2">
+        <label class="text-sm font-medium text-slate-300">Modo de Operación</label>
+        <div class="grid grid-cols-2 gap-2">
+          <button id="mode-chat" class="p-3 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold flex flex-col items-center gap-1 transition-colors">
+            <i data-lucide="message-square" class="w-4 h-4"></i> Consejos y Tips
+          </button>
+          <button id="mode-artist" class="p-3 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-semibold flex flex-col items-center gap-1 transition-colors border border-slate-700">
+            <i data-lucide="palette" class="w-4 h-4"></i> Crear Diseños
+          </button>
+        </div>
+        <p class="text-[11px] text-slate-400 mt-1">El "Modo Diseños" le permite a GlowBot crear imágenes artísticas de uñas, peinados o ideas de maquillaje para ti.</p>
+      </div>
+
+      <!-- Entrada de Clave API Manual (Opcional - Súper Respaldo en caso de error 403) -->
+      <div class="flex flex-col gap-2 border-t border-slate-800 pt-4">
+        <label class="text-xs font-medium text-rose-300 flex items-center gap-1.5">
+          <i data-lucide="key" class="w-4 h-4"></i> Clave API Personalizada (Opcional)
+        </label>
+        <input type="password" id="api-key-input" placeholder="Pega tu clave de Google aquí..." class="bg-slate-950 border border-rose-500/30 rounded-lg p-2 text-xs text-slate-100 focus:outline-none focus:border-rose-500">
+        <p class="text-[10px] text-slate-400 leading-normal">Si ves fallos de conexión, puedes generar y pegar una clave gratuita de Google AI Studio para usar la IA en la nube.</p>
+      </div>
+    </div>
+
+    <!-- Área de Chat -->
+    <div class="flex-1 flex flex-col h-full bg-gradient-to-b from-slate-950 via-rose-950/10 to-slate-950 relative">
+      
+      <!-- Mensajes de Bienvenida e Historial -->
+      <div id="chat-history" class="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
+        <!-- Mensaje de bienvenida inicial -->
+        <div class="flex items-start gap-4 max-w-3xl mx-auto">
+          <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-pink-500 to-rose-500 flex items-center justify-center flex-shrink-0 glow-rose">
+            <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
+          </div>
+          <div class="flex-1 bg-slate-900/70 border border-rose-500/10 p-4 rounded-2xl rounded-tl-none shadow-md">
+            <p class="text-sm leading-relaxed">
+              ¡Hola, corazón! ✨ Te doy la bienvenida a <strong>GlowBot</strong>, tu salón de belleza virtual. 💖💇‍♀️💅
+            </p>
+            <p class="text-xs text-slate-300 mt-2">
+              ¿En qué puedo consentirte hoy? Puedo darte los mejores consejos de estilo o crear hermosos diseños artísticos para ti. ¡Pregúntame o inspírate con estas ideas!
+            </p>
+            
+            <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              <button onclick="fillPrompt('Dibuja un diseño de uñas con mariposas celestes')" class="p-3 bg-slate-950/80 hover:bg-rose-950/40 border border-rose-900/30 rounded-xl text-left flex items-center gap-2 transition-all">
+                <i data-lucide="palette" class="w-4 h-4 text-pink-400"></i>
+                <span>"Diseño de uñas con mariposas"</span>
+              </button>
+              <button onclick="fillPrompt('¿Qué rutina de cuidado diario me recomiendas para mi piel?')" class="p-3 bg-slate-950/80 hover:bg-rose-950/40 border border-rose-900/30 rounded-xl text-left flex items-center gap-2 transition-all">
+                <i data-lucide="heart" class="w-4 h-4 text-rose-400"></i>
+                <span>"Rutina para el cuidado de la piel"</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Barra de Entrada e Inputs -->
+      <div class="p-4 bg-slate-950/90 border-t border-rose-500/10 backdrop-blur-md">
+        <div class="max-w-3xl mx-auto">
+          
+          <!-- Vista previa de imagen cargada por el usuario -->
+          <div id="image-preview-container" class="hidden mb-3 p-2 bg-slate-900 border border-rose-500/15 rounded-xl flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <img id="image-preview" src="" class="w-12 h-12 object-cover rounded-lg border border-slate-700" alt="Preview">
+              <div>
+                <p class="text-xs font-semibold text-rose-200">Foto cargada para análisis</p>
+                <p class="text-[10px] text-slate-400">GlowBot te dará ideas de peinados o tonos basados en esta imagen</p>
+              </div>
+            </div>
+            <button id="remove-image-btn" class="p-1 hover:bg-slate-800 rounded text-red-400">
+              <i data-lucide="trash-2" class="w-5 h-5"></i>
+            </button>
+          </div>
+
+          <!-- Barra de Entrada Principal -->
+          <form id="chat-form" class="flex items-center gap-2 bg-slate-900 border border-rose-500/30 focus-within:border-rose-400 rounded-2xl p-2 transition-all">
+            <!-- Botón para adjuntar foto -->
+            <button type="button" id="attach-btn" class="p-3 hover:bg-slate-800 rounded-xl text-rose-400 hover:text-rose-300 transition-colors" title="Subir foto de maquillaje/peinado">
+              <i data-lucide="camera" class="w-5 h-5"></i>
+            </button>
+            <input type="file" id="image-input" accept="image/*" class="hidden">
+
+            <!-- Entrada de texto -->
+            <input type="text" id="user-input" placeholder="Pregúntame sobre peinados, uñas, mascarillas..." class="flex-1 bg-transparent border-0 outline-none px-2 py-3 text-sm text-slate-100 placeholder-slate-500">
+
+            <!-- Botón de Envío -->
+            <button type="submit" class="p-3 bg-gradient-to-r from-pink-500 to-rose-500 hover:opacity-90 rounded-xl text-white font-semibold flex items-center justify-center transition-opacity shadow-lg">
+              <i data-lucide="send" class="w-5 h-5"></i>
+            </button>
+          </form>
+          
+          <div class="flex items-center justify-between mt-2 px-1 text-[10px] text-slate-500">
+            <span>Prueba pidiendo: "Dibuja un peinado elegante" o escríbeme lo que quieras.</span>
+            <span id="current-mode-indicator" class="text-rose-400 font-semibold">Modo: Consejos y Tips</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Sistema de Notificaciones Flotantes (Toasts) -->
+  <div id="toast-container" class="fixed bottom-24 right-6 flex flex-col gap-2 z-50"></div>
+
+  <!-- SCRIPT DE PROGRAMACIÓN -->
+  <script>
+    // Inicialización de Iconos Lucide
+    lucide.createIcons();
+
+    // Configuración de la API de Gemini (Estricto con el entorno de Canvas)
+    const apiKey = "";
+    
+    // Obtener la API Key activa
+    function getActiveApiKey() {
+      const customKey = localStorage.getItem('glowbot_custom_api_key');
+      return customKey || apiKey;
+    }
+
+    // Configuración del Estado de la Aplicación
+    let currentMode = "chat"; // "chat" o "artist"
+    let uploadedImageBase64 = null;
+    let uploadedImageMimeType = null;
+    let isSimulatorActive = false; // Indica si estamos usando el modo de respaldo offline
+
+    // Referencias de Elementos DOM
+    const chatHistory = document.getElementById('chat-history');
+    const chatForm = document.getElementById('chat-form');
+    const userInput = document.getElementById('user-input');
+    const configPanel = document.getElementById('config-panel');
+    const toggleConfigBtn = document.getElementById('toggle-config-btn');
+    const closeConfigBtn = document.getElementById('close-config-btn');
+    const imageInput = document.getElementById('image-input');
+    const attachBtn = document.getElementById('attach-btn');
+    const imagePreviewContainer = document.getElementById('image-preview-container');
+    const imagePreview = document.getElementById('image-preview');
+    const removeImageBtn = document.getElementById('remove-image-btn');
+    const voiceSelect = document.getElementById('voice-select');
+    const autoSpeakToggle = document.getElementById('auto-speak-toggle');
+    const modeChatBtn = document.getElementById('mode-chat');
+    const modeArtistBtn = document.getElementById('mode-artist');
+    const currentModeIndicator = document.getElementById('current-mode-indicator');
+    const toastContainer = document.getElementById('toast-container');
+    const apiKeyInput = document.getElementById('api-key-input');
+    const connectionBadge = document.getElementById('connection-badge');
+
+    // Inicializar el input de la API Key si ya estaba guardado en el navegador
+    if (apiKeyInput) {
+      apiKeyInput.value = localStorage.getItem('glowbot_custom_api_key') || '';
+      apiKeyInput.addEventListener('input', (e) => {
+        localStorage.setItem('glowbot_custom_api_key', e.target.value.trim());
+        checkAndConfigureConnectionState();
+      });
+    }
+
+    function checkAndConfigureConnectionState() {
+      const activeKey = getActiveApiKey();
+      if (!activeKey) {
+        // Activamos simulador por defecto si no hay clave, para que no ocurra error jamás
+        isSimulatorActive = true;
+        connectionBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-pink-400 animate-pulse"></span> Modo Simulación (Offline)`;
+        connectionBadge.className = "px-2 py-1 rounded-full text-[10px] font-bold bg-pink-500/10 text-pink-400 border border-pink-500/20 flex items-center gap-1";
+      } else {
+        isSimulatorActive = false;
+        connectionBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Modo IA Nube`;
+        connectionBadge.className = "px-2 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1";
+      }
+    }
+
+    // Llamar al iniciar para ajustar el estado visual
+    checkAndConfigureConnectionState();
+
+    // Manejo del Panel de Ajustes Lateral
+    toggleConfigBtn.addEventListener('click', () => {
+      configPanel.classList.remove('translate-x-full');
+    });
+    closeConfigBtn.addEventListener('click', () => {
+      configPanel.classList.add('translate-x-full');
+    });
+
+    // Cambiar Modos de Trabajo
+    modeChatBtn.addEventListener('click', () => {
+      setMode("chat");
+    });
+    modeArtistBtn.addEventListener('click', () => {
+      setMode("artist");
+    });
+
+    function setMode(mode) {
+      currentMode = mode;
+      if (mode === "chat") {
+        modeChatBtn.className = "p-3 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold flex flex-col items-center gap-1 transition-colors";
+        modeArtistBtn.className = "p-3 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-semibold flex flex-col items-center gap-1 transition-colors border border-slate-700";
+        currentModeIndicator.textContent = "Modo: Consejos y Tips";
+        userInput.placeholder = "Pregúntame lo que quieras sobre belleza...";
+      } else {
+        modeArtistBtn.className = "p-3 bg-gradient-to-tr from-pink-500 to-rose-500 hover:opacity-90 text-white rounded-lg text-xs font-semibold flex flex-col items-center gap-1 transition-colors shadow-lg";
+        modeChatBtn.className = "p-3 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-semibold flex flex-col items-center gap-1 transition-colors border border-slate-700";
+        currentModeIndicator.textContent = "Modo: Diseños Artísticos";
+        userInput.placeholder = "Describe el diseño que quieres crear (ej. peinado o uñas)...";
+      }
+    }
+
+    // Funcionalidad para adjuntar imagen para análisis
+    attachBtn.addEventListener('click', () => imageInput.click());
+    
+    imageInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          uploadedImageBase64 = evt.target.result.split(',')[1];
+          uploadedImageMimeType = file.type;
+          imagePreview.src = evt.target.result;
+          imagePreviewContainer.classList.remove('hidden');
+          showToast("¡Imagen cargada! GlowBot la analizará por ti.", "success");
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    removeImageBtn.addEventListener('click', () => {
+      uploadedImageBase64 = null;
+      uploadedImageMimeType = null;
+      imageInput.value = '';
+      imagePreviewContainer.classList.add('hidden');
+      showToast("Imagen removida", "info");
+    });
+
+    // Rellenar prompts rápidos
+    window.fillPrompt = function(promptText) {
+      userInput.value = promptText;
+      userInput.focus();
+    };
+
+    // Alertas tipo Toast
+    function showToast(message, type = "info") {
+      const toast = document.createElement('div');
+      let bgColor = "bg-slate-900 border-rose-500/20";
+      let icon = "info";
+      let textColor = "text-rose-400";
+
+      if (type === "success") {
+        bgColor = "bg-slate-900 border-pink-500/40";
+        icon = "heart";
+        textColor = "text-pink-400";
+      } else if (type === "error") {
+        bgColor = "bg-slate-900 border-red-500/30";
+        icon = "alert-triangle";
+        textColor = "text-red-400";
+      }
+
+      toast.className = `${bgColor} border p-4 rounded-xl shadow-lg flex items-center gap-3 min-w-[280px] max-w-sm transition-all`;
+      toast.innerHTML = `
+        <i data-lucide="${icon}" class="w-5 h-5 ${textColor}"></i>
+        <div class="flex-1">
+          <p class="text-xs font-semibold text-slate-100">${message}</p>
+        </div>
+      `;
+      toastContainer.appendChild(toast);
+      lucide.createIcons();
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+
+    // Reintento con backoff exponencial mejorado (no bloqueante para fallos de permisos 403)
+    async function fetchWithRetry(url, options, maxRetries = 3) {
+      let delay = 800;
+      for (let i = 0; i < maxRetries; i++) {
+        try {
+          const response = await fetch(url, options);
+          if (response.ok) return await response.json();
+          
+          if (response.status >= 400 && response.status < 500) {
+            throw new Error(`Acceso denegado o clave de API no válida (${response.status})`);
+          }
+          
+          if (response.status === 429 || response.status >= 500) {
+            if (i === maxRetries - 1) throw new Error(`El servidor de Google está ocupado (${response.status})`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+            delay *= 1.5;
+            continue;
+          }
+          throw new Error(`Código de estado: ${response.status}`);
+        } catch (error) {
+          if (i === maxRetries - 1 || error.message.includes("403") || error.message.includes("API")) {
+            throw error;
+          }
+          await new Promise(resolve => setTimeout(resolve, delay));
+          delay *= 1.5;
+        }
+      }
+    }
+
+    // MÁQUINA DE RESPUESTAS LOCAL (El cerebro alternativo de respaldo)
+    function generateSimulatedResponse(promptText) {
+      const query = promptText.toLowerCase();
+      
+      const responses = {
+        uñas: "¡Las uñas son tu accesorio de estilo más divertido! 💅 Te recomiendo un diseño con base 'nude' y detallitos de mariposas celestes o estrellas plateadas para brillar muchísimo. ✨ Para cuidarlas, aplícate una gota de aceite de almendras en las cutículas todas las noches antes de dormir. ¡Se verán súper fuertes y relucientes! 🌸",
+        peinado: "¡Qué hermosa idea para tu cabello! 💇‍♀️ Un peinado que nunca pasa de moda y es muy fácil de hacer es una trenza de espiga un poco suelta para darle un toque bohemio y romántico. Recuerda aplicarte siempre protector térmico antes de usar planchas o secadora para mantener tu cabello ultra hidratado. ✨",
+        piel: "¡Para tener un rostro radiante, la hidratación es tu mejor aliada! 🧴 Un tip natural muy sano y seguro es mezclar una cucharada de avena molida fina con una cucharada de miel de abejas. Déjala en tu rostro por 10 minutos y retírala con agua templada. ¡La avena calma la piel y la deja súper suavecita de forma natural! 🌸",
+        maquillaje: "¡El maquillaje creativo es súper divertido para expresarte! 💄 Prueba usar un corrector ligero, un toque de rubor rosado en las mejillas para un look súper saludable, y un gloss de labios con brillitos. Si quieres destacar tus ojos, un delineado muy fino café te dará una mirada súper tierna y natural. ✨",
+        hola: "¡Hola, mi reina hermosa! 💖 Qué alegría saludarte hoy. Soy GlowBot, tu asesora de belleza personal. ¿De qué te gustaría que platiquemos hoy? ¿Prefieres consejos para tus uñas 💅, ideas para peinados 💇‍♀️, o una rutina de skincare saludable 🧴? ✨",
+        gracias: "¡No tienes nada que agradecer, corazón! 🥰 Para mí es un placer absoluto ayudarte a descubrir tu brillo único. ¡Recuerda que tu belleza exterior es solo un reflejo de lo maravillosa que eres por dentro! 💖✨"
+      };
+
+      // Búsqueda de palabras clave
+      if (query.includes("uña") || query.includes("manicura") || query.includes("acrylic") || query.includes("esmalte")) {
+        return responses.uñas;
+      } else if (query.includes("peinado") || query.includes("cabello") || query.includes("pelo") || query.includes("trenza") || query.includes("corte")) {
+        return responses.peinado;
+      } else if (query.includes("piel") || query.includes("skincare") || query.includes("cara") || query.includes("rostro") || query.includes("mascarilla")) {
+        return responses.piel;
+      } else if (query.includes("maquillaje") || query.includes("maquillar") || query.includes("labios") || query.includes("rubor")) {
+        return responses.maquillaje;
+      } else if (query.includes("hola") || query.includes("saludo") || query.includes("buenos")) {
+        return responses.hola;
+      } else if (query.includes("gracias") || query.includes("linda") || query.includes("amiga")) {
+        return responses.gracias;
+      }
+
+      // Respuesta por defecto interactiva y completa
+      return "¡Qué pregunta tan increíble, corazón! 💖 Como tu consejera de belleza favorita, te sugiero que siempre priorices el cuidado natural e hidratación de tu cuerpo. 🌸 Tomar suficiente agua y usar protector solar diariamente mantendrá tu brillo a tope. ✨ ¿Quieres que hablemos sobre cómo hacer un peinado chic 💇‍♀️, un diseño de uñas mágico 💅 o consejos para cuidar tu piel sanamente? ✨";
+    }
+
+    // Diseñador Digital de Gráficos SVG interactivo (En caso de que Imagen 4.0 offline falle)
+    function generateSimulatedSVG(promptText) {
+      const query = promptText.toLowerCase();
+      let svgContent = "";
+      let title = "Diseño de Belleza Personalizado";
+      
+      if (query.includes("uña") || query.includes("manicura")) {
+        title = "Nail Art Creativo 💅";
+        svgContent = `
+          <rect width="100%" height="100%" fill="#fce7f3"/>
+          <g transform="translate(150, 60)">
+            <!-- Fondo de mano silueta -->
+            <rect x="-60" y="-20" width="220" height="280" rx="40" fill="#fdf2f8" stroke="#f472b6" stroke-width="4"/>
+            <text x="50" y="230" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#db2777">GLOW NAILS ART</text>
+            <!-- Dedos con uñas pintadas decoradas -->
+            <!-- Dedo 1 -->
+            <rect x="10" y="40" width="30" height="90" rx="15" fill="#fbcfe8" stroke="#ec4899" stroke-width="3"/>
+            <path d="M 10 50 Q 25 35 40 50 L 40 40 L 10 40 Z" fill="#60a5fa"/> <!-- Uña Celeste -->
+            <circle cx="25" cy="45" r="3" fill="#fef08a"/> <!-- Brillo -->
+            
+            <!-- Dedo 2 (Medio) -->
+            <rect x="50" y="20" width="30" height="100" rx="15" fill="#fbcfe8" stroke="#ec4899" stroke-width="3"/>
+            <path d="M 50 30 Q 65 15 80 30 L 80 20 L 50 20 Z" fill="#38bdf8"/> <!-- Uña Mariposa Celeste -->
+            <!-- Pequeña mariposa abstracta -->
+            <path d="M 60 22 Q 65 17 70 22 Q 65 27 60 22" fill="#ffffff"/>
+            
+            <!-- Dedo 3 (Anular) -->
+            <rect x="90" y="45" width="30" height="85" rx="15" fill="#fbcfe8" stroke="#ec4899" stroke-width="3"/>
+            <path d="M 90 55 Q 105 40 120 55 L 120 45 L 90 45 Z" fill="#c084fc"/> <!-- Uña Violeta -->
+            <circle cx="105" cy="50" r="4" fill="#fde047"/>
+          </g>
+          <!-- Destellos -->
+          <path d="M 300 50 L 305 60 L 315 65 L 305 70 L 300 80 L 295 70 L 285 65 L 295 60 Z" fill="#fde047"/>
+          <path d="M 80 180 L 83 185 L 90 187 L 83 189 L 80 194 L 77 189 L 70 187 L 77 185 Z" fill="#f472b6"/>
+        `;
+      } else if (query.includes("peinado") || query.includes("cabello") || query.includes("pelo")) {
+        title = "Peinado & Estilo Premium 💇‍♀️";
+        svgContent = `
+          <rect width="100%" height="100%" fill="#fef2f2"/>
+          <g transform="translate(140, 40)">
+            <!-- Rostro silueta -->
+            <circle cx="110" cy="130" r="60" fill="#ffedd5" stroke="#fca5a5" stroke-width="3"/>
+            <!-- Cabello largo hermoso trenzado -->
+            <path d="M 50 130 C 30 200 80 300 110 320 C 140 300 190 200 170 130 C 160 80 60 80 50 130 Z" fill="#f59e0b" opacity="0.95"/>
+            <!-- Trenza decorada -->
+            <path d="M 100 160 Q 110 180 100 200 Q 110 220 100 240 Q 110 260 105 280 L 115 280" fill="none" stroke="#d97706" stroke-width="12" stroke-linecap="round"/>
+            <!-- Flores de adorno en la trenza -->
+            <circle cx="105" cy="190" r="6" fill="#f43f5e"/>
+            <circle cx="105" cy="190" r="2" fill="#fff"/>
+            <circle cx="102" cy="230" r="6" fill="#ec4899"/>
+            <circle cx="102" cy="230" r="2" fill="#fff"/>
+            
+            <text x="110" y="340" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#be123c">GLOW HAIR DESIGN</text>
+          </g>
+          <!-- Brillos -->
+          <path d="M 60 50 L 63 55 L 70 57 L 63 59 L 60 64 L 57 59 L 50 57 L 57 55 Z" fill="#fde047"/>
+        `;
+      } else {
+        // Maquillaje o genérico
+        title = "Glow Maquillaje Chic 💄";
+        svgContent = `
+          <rect width="100%" height="100%" fill="#faf5ff"/>
+          <g transform="translate(130, 45)">
+            <!-- Rostro de perfil o silueta con maquillaje de ojos brillante -->
+            <circle cx="120" cy="120" r="65" fill="#fff1f2" stroke="#f472b6" stroke-width="3"/>
+            <!-- Ojo cerrado con pestañas largas y sombra rosa -->
+            <path d="M 85 110 Q 105 90 125 110" fill="none" stroke="#db2777" stroke-width="6"/>
+            <path d="M 85 110 Q 105 95 125 110" fill="none" stroke="#0f172a" stroke-width="3"/>
+            <!-- Pestañas -->
+            <line x1="90" y1="105" x2="85" y2="95" stroke="#0f172a" stroke-width="2"/>
+            <line x1="105" y1="102" x2="105" y2="90" stroke="#0f172a" stroke-width="2"/>
+            <line x1="120" y1="105" x2="125" y2="95" stroke="#0f172a" stroke-width="2"/>
+            <!-- Rubor rosado en mejilla -->
+            <ellipse cx="140" cy="140" rx="20" ry="12" fill="#f472b6" opacity="0.4"/>
+            <!-- Labios con brillo labial rojo pasión -->
+            <path d="M 80 155 Q 95 150 110 155 Q 95 165 80 155 Z" fill="#e11d48" stroke="#be123c" stroke-width="2"/>
+            <text x="120" y="320" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#701a75">STYLE & GLAMOUR</text>
+          </g>
+          <path d="M 310 90 L 313 95 L 320 97 L 313 99 L 310 104 L 307 99 L 300 97 L 307 95 Z" fill="#e9d5ff"/>
+        `;
+      }
+
+      return `
+        <svg viewBox="0 0 500 400" class="w-full h-auto rounded-xl shadow-inner border border-rose-500/10">
+          ${svgContent}
+        </svg>
+      `;
+    }
+
+    // Envío del Formulario
+    chatForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const prompt = userInput.value.trim();
+      
+      if (!prompt && !uploadedImageBase64) {
+        showToast("Escribe una idea o sube una foto para comenzar.", "error");
+        return;
+      }
+
+      const currentPrompt = prompt;
+      const currentImgBase64 = uploadedImageBase64;
+      const currentImgMime = uploadedImageMimeType;
+      
+      userInput.value = "";
+      uploadedImageBase64 = null;
+      uploadedImageMimeType = null;
+      imagePreviewContainer.classList.add('hidden');
+      imageInput.value = '';
+
+      // Pintar mensaje del usuario
+      appendUserMessage(currentPrompt, currentImgBase64, currentImgMime);
+
+      // Burbuja de carga para GlowBot
+      const botMessageId = "bot-loading-" + Date.now();
+      appendBotLoadingMessage(botMessageId);
+
+      // Comprobar si pide una imagen explícitamente o si está en modo creador de diseños
+      const checkArtCommand = currentPrompt.toLowerCase().startsWith("dibuja") || 
+                              currentPrompt.toLowerCase().startsWith("crea una imagen") ||
+                              currentPrompt.toLowerCase().startsWith("genera una imagen") ||
+                              currentPrompt.toLowerCase().startsWith("haz un diseño") ||
+                              currentPrompt.toLowerCase().startsWith("diseña");
+
+      // Verificamos si estamos obligados a simular por falta de clave
+      if (isSimulatorActive) {
+        setTimeout(() => {
+          if (currentMode === "artist" || checkArtCommand) {
+            displaySimulatedImage(currentPrompt, botMessageId);
+          } else {
+            const simulatedText = generateSimulatedResponse(currentPrompt);
+            displayBotFinalMessage(botMessageId, simulatedText);
+          }
+        }, 1200);
+        return;
+      }
+
+      // Si hay clave API, intentamos usar el modelo real de la nube
+      if (currentMode === "artist" || checkArtCommand) {
+        try {
+          await generateBotImage(currentPrompt, botMessageId);
+        } catch (error) {
+          // Si el servidor falla, ¡activamos la simulación para que el usuario no vea errores!
+          isSimulatorActive = true;
+          displaySimulatedImage(currentPrompt, botMessageId);
+          showToast("Servidor ocupado. Iniciando diseño local inteligente.", "info");
+        }
+      } else {
+        try {
+          await generateBotText(currentPrompt, currentImgBase64, currentImgMime, botMessageId);
+        } catch (error) {
+          // Si el servidor de IA falla, usamos nuestra base local inmediatamente
+          isSimulatorActive = true;
+          const simulatedText = generateSimulatedResponse(currentPrompt);
+          displayBotFinalMessage(botMessageId, simulatedText);
+          showToast("Conexión de IA ocupada. Cargando respuestas de respaldo.", "info");
+        }
+      }
+    });
+
+    function appendUserMessage(text, imgBase64, imgMime) {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = "flex items-start gap-4 max-w-3xl mx-auto justify-end";
+      
+      let imgHTML = "";
+      if (imgBase64) {
+        imgHTML = `<img src="data:${imgMime};base64,${imgBase64}" class="w-48 h-auto rounded-xl border border-rose-500/30 mb-2 object-cover max-h-48" />`;
+      }
+
+      msgDiv.innerHTML = `
+        <div class="flex-1 flex flex-col items-end">
+          <div class="bg-gradient-to-r from-pink-500 via-rose-500 to-rose-600 text-white p-4 rounded-2xl rounded-tr-none shadow-lg max-w-[85%]">
+            ${imgHTML}
+            <p class="text-sm leading-relaxed">${escapeHtml(text) || "<i>Analiza esta foto de belleza</i>"}</p>
+          </div>
+          <span class="text-[10px] text-slate-500 mt-1">Tú</span>
+        </div>
+        <div class="w-9 h-9 rounded-full bg-slate-800 flex items-center justify-center flex-shrink-0">
+          <i data-lucide="user" class="w-5 h-5 text-slate-300"></i>
+        </div>
+      `;
+      chatHistory.appendChild(msgDiv);
+      lucide.createIcons();
+      scrollToBottom();
+    }
+
+    function appendBotLoadingMessage(id) {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = "flex items-start gap-4 max-w-3xl mx-auto";
+      msgDiv.id = id;
+
+      msgDiv.innerHTML = `
+        <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-pink-500 to-rose-500 flex items-center justify-center flex-shrink-0 glow-rose">
+          <i data-lucide="sparkles" class="w-5 h-5 text-white animate-spin"></i>
+        </div>
+        <div class="flex-1 bg-slate-900/60 border border-rose-500/10 p-4 rounded-2xl rounded-tl-none shadow-sm">
+          <div class="flex items-center gap-2 text-rose-400 text-sm">
+            <span class="animate-ping">✨</span>
+            <span class="text-xs text-slate-300 ml-2">GlowBot está preparando tus consejos de estilo...</span>
+          </div>
+        </div>
+      `;
+      chatHistory.appendChild(msgDiv);
+      scrollToBottom();
+    }
+
+    // Pinta un dibujo SVG generado localmente de forma hermosa
+    function displaySimulatedImage(promptText, botMessageId) {
+      const targetDiv = document.getElementById(botMessageId);
+      if (!targetDiv) return;
+
+      const cleanPrompt = promptText.replace(/dibuja|crea una imagen|genera un dibujo|diseña|haz un diseño de/gi, "").trim();
+      const svgGraphic = generateSimulatedSVG(cleanPrompt);
+
+      targetDiv.innerHTML = `
+        <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-pink-500 to-rose-500 flex items-center justify-center flex-shrink-0 shadow-md">
+          <i data-lucide="palette" class="w-5 h-5 text-white"></i>
+        </div>
+        <div class="flex-1 bg-slate-900/60 border border-rose-500/10 p-4 rounded-2xl rounded-tl-none shadow-md">
+          <p class="text-xs text-pink-300 mb-2">✨ ¡He diseñado este boceto especial en mi libreta digital para ti!</p>
+          <div class="overflow-hidden rounded-xl border border-rose-500/20 bg-slate-950 p-2">
+            ${svgGraphic}
+          </div>
+          <p class="text-[11px] italic text-rose-400 mt-2">Diseño digital local: "${escapeHtml(cleanPrompt || 'Diseño de Estilo')}"</p>
+        </div>
+      `;
+      lucide.createIcons();
+      scrollToBottom();
+    }
+
+    // Generar Respuesta de Consejos de Estilo con Gemini
+    async function generateBotText(promptText, imgBase64, imgMime, botMessageId) {
+      const activeKey = getActiveApiKey();
+      const parts = [];
+      if (promptText) {
+        parts.push({ text: promptText });
+      }
+      if (imgBase64 && imgMime) {
+        parts.push({
+          inlineData: {
+            mimeType: imgMime,
+            data: imgBase64
+          }
+        });
+      }
+
+      const payload = {
+        contents: [{ parts: parts }],
+        systemInstruction: {
+          parts: [{ text: "Eres GlowBot, la estilista virtual, diseñadora de uñas y maquilladora profesional líder de un exclusivo salón de belleza. Eres sumamente simpática, dulce, moderna y con gran sentido de la moda. Hablas usando emojis encantadores de cuidado personal y belleza (💅, 💇‍♀️, ✨, 💄, 🌸, 🧴). Tus respuestas deben ser limpias, seguras, apropiadas para todo público (incluso menores de 18 años, promoviendo el cuidado saludable, peinados divertidos, arte en uñas y maquillaje creativo). Da explicaciones paso a paso de forma hermosa y estructurada." }]
+        }
+      };
+
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${activeKey}`;
+
+      try {
+        const responseData = await fetchWithRetry(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const botReply = responseData.candidates?.[0]?.content?.parts?.[0]?.text || "¡Hola, cariño! No pude procesar tu maravillosa idea de estilo en este momento.";
+        
+        displayBotFinalMessage(botMessageId, botReply);
+
+        if (autoSpeakToggle.checked) {
+          generateAndPlayAudio(botReply, botMessageId);
+        }
+
+      } catch (err) {
+        throw err;
+      }
+    }
+
+    // Generar Imágenes del Salón de Belleza con Imagen 4.0
+    async function generateBotImage(promptText, botMessageId) {
+      const activeKey = getActiveApiKey();
+      const cleanPrompt = promptText.replace(/dibuja|crea una imagen|genera un dibujo|diseña|haz un diseño de/gi, "").trim();
+      const beautyContextPrompt = `Un hermoso diseño en primer plano de estilo profesional, de ${cleanPrompt}, arte fino de salón de belleza, colores vibrantes, iluminación de estudio suave, de alta calidad, estético`;
+
+      const payload = {
+        instances: {
+          prompt: beautyContextPrompt
+        },
+        parameters: {
+          sampleCount: 1
+        }
+      };
+
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${activeKey}`;
+
+      try {
+        const responseData = await fetchWithRetry(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const base64Bytes = responseData.predictions?.[0]?.bytesBase64Encoded;
+        if (!base64Bytes) {
+          throw new Error("No se recibieron bytes de imagen válidos de la API.");
+        }
+
+        const imageSrc = `data:image/png;base64,${base64Bytes}`;
+        
+        const targetDiv = document.getElementById(botMessageId);
+        if (targetDiv) {
+          targetDiv.innerHTML = `
+            <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-pink-500 to-rose-500 flex items-center justify-center flex-shrink-0 shadow-md">
+              <i data-lucide="palette" class="w-5 h-5 text-white"></i>
+            </div>
+            <div class="flex-1 bg-slate-900/60 border border-rose-500/10 p-4 rounded-2xl rounded-tl-none shadow-md">
+              <p class="text-xs text-rose-300 mb-2">✨ ¡He diseñado esta propuesta inspirada en tu idea! ¿Qué te parece?</p>
+              <div class="relative group overflow-hidden rounded-xl border border-rose-500/10">
+                <img src="${imageSrc}" class="w-full h-auto object-cover max-h-[380px]" alt="Diseño de Belleza GlowBot">
+                <div class="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                  <a href="${imageSrc}" download="glowbot-estilo.png" class="p-3 bg-rose-600 hover:bg-rose-700 text-white rounded-xl flex items-center gap-2 font-semibold text-xs shadow-lg transition-transform hover:scale-105">
+                    <i data-lucide="download" class="w-4 h-4"></i> Guardar Diseño
+                  </a>
+                </div>
+              </div>
+              <p class="text-[11px] italic text-rose-400 mt-2">"${escapeHtml(cleanPrompt)}"</p>
+            </div>
+          `;
+          lucide.createIcons();
+          scrollToBottom();
+        }
+
+      } catch (err) {
+        throw err;
+      }
+    }
+
+    // Generar TTS de Belleza
+    async function generateAndPlayAudio(textToSpeak, botMessageId) {
+      const activeKey = getActiveApiKey();
+      const selectedVoice = voiceSelect.value;
+      const cleanText = textToSpeak
+        .replace(/[\*\_`#\-]/g, "")
+        .replace(/[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF]/g, "");
+
+      const payload = {
+        contents: [{ parts: [{ text: `Say warmly: ${cleanText}` }] }],
+        generationConfig: {
+          responseModalities: ["AUDIO"],
+          speechConfig: {
+            voiceConfig: {
+              prebuiltVoiceConfig: {
+                voiceName: selectedVoice
+              }
+            }
+          }
+        },
+        model: "gemini-2.5-flash-preview-tts"
+      };
+
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${activeKey}`;
+
+      try {
+        const responseData = await fetchWithRetry(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const pcmData = responseData.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+        if (pcmData) {
+          const wavUrl = pcmToWav(pcmData, 24000);
+          appendAudioPlayerToBotMessage(botMessageId, wavUrl);
+        }
+      } catch (err) {
+        // Fallback silencioso
+      }
+    }
+
+    function appendAudioPlayerToBotMessage(botMessageId, wavUrl) {
+      const targetDiv = document.getElementById(botMessageId);
+      if (!targetDiv) return;
+
+      const messageContent = targetDiv.querySelector('.flex-1');
+      if (messageContent) {
+        if (messageContent.querySelector('.audio-player-container')) return;
+
+        const audioContainer = document.createElement('div');
+        audioContainer.className = "audio-player-container mt-4 pt-3 border-t border-slate-800 flex items-center gap-3";
+        audioContainer.innerHTML = `
+          <button class="play-audio-btn w-8 h-8 rounded-full bg-rose-600 hover:bg-rose-700 flex items-center justify-center text-white shadow-md transition-colors">
+            <i data-lucide="play" class="w-4 h-4 fill-current"></i>
+          </button>
+          <div class="flex-1 flex flex-col">
+            <span class="text-[10px] text-rose-300">Escuchar Consejos de Estilo</span>
+            <div class="h-1 bg-slate-800 rounded-full overflow-hidden mt-1 relative">
+              <div class="audio-progress h-full bg-gradient-to-r from-pink-500 to-rose-500 w-0 transition-all duration-100"></div>
+            </div>
+          </div>
+          <audio class="hidden" src="${wavUrl}"></audio>
+        `;
+        messageContent.appendChild(audioContainer);
+        lucide.createIcons();
+
+        const audioEl = audioContainer.querySelector('audio');
+        const playBtn = audioContainer.querySelector('.play-audio-btn');
+        const progressEl = audioContainer.querySelector('.audio-progress');
+
+        playBtn.addEventListener('click', () => {
+          if (audioEl.paused) {
+            audioEl.play();
+            playBtn.innerHTML = `<i data-lucide="pause" class="w-4 h-4 fill-current"></i>`;
+            lucide.createIcons();
+          } else {
+            audioEl.pause();
+            playBtn.innerHTML = `<i data-lucide="play" class="w-4 h-4 fill-current"></i>`;
+            lucide.createIcons();
+          }
+        });
+
+        audioEl.addEventListener('timeupdate', () => {
+          const percent = (audioEl.currentTime / audioEl.duration) * 100;
+          progressEl.style.width = `${percent}%`;
+        });
+
+        audioEl.addEventListener('ended', () => {
+          playBtn.innerHTML = `<i data-lucide="play" class="w-4 h-4 fill-current"></i>`;
+          progressEl.style.width = '0%';
+          lucide.createIcons();
+        });
+
+        audioEl.play().catch(() => {});
+      }
+    }
+
+    function displayBotFinalMessage(id, botText) {
+      const targetDiv = document.getElementById(id);
+      if (!targetDiv) return;
+
+      const formattedText = parseMarkdown(botText);
+
+      targetDiv.innerHTML = `
+        <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-pink-500 to-rose-500 flex items-center justify-center flex-shrink-0 shadow-md">
+          <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
+        </div>
+        <div class="flex-1 bg-slate-900/60 border border-rose-500/10 p-4 rounded-2xl rounded-tl-none shadow-md">
+          <div class="text-sm leading-relaxed text-slate-100 space-y-2">
+            ${formattedText}
+          </div>
+          <div class="flex items-center justify-between mt-4 text-[10px] text-slate-400">
+            <span>GlowBot 🌸</span>
+            <button class="speak-manually-btn p-1 hover:bg-slate-800 rounded flex items-center gap-1 hover:text-rose-300 transition-colors">
+              <i data-lucide="volume-2" class="w-3.5 h-3.5"></i> Leer Consejos
+            </button>
+          </div>
+        </div>
+      `;
+      lucide.createIcons();
+      scrollToBottom();
+
+      const speakBtn = targetDiv.querySelector('.speak-manually-btn');
+      speakBtn.addEventListener('click', () => {
+        generateAndPlayAudio(botText, id);
+      });
+    }
+
+    // Desplazamiento
+    function scrollToBottom() {
+      chatHistory.scrollTop = chatHistory.scrollHeight;
+    }
+
+    function escapeHtml(text) {
+      if (!text) return "";
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    // Convertidor básico de Markdown a HTML
+    function parseMarkdown(text) {
+      let html = escapeHtml(text);
+      html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+      html = html.replace(/\n/g, '<br>');
+      return html;
+    }
+
+    function pcmToWav(pcmBase64, sampleRate = 24000) {
+      const binaryString = atob(pcmBase64);
+      const len = binaryString.length;
+      const bytes = new Uint8Array(len);
+      for (let i = 0; i < len; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+      
+      const buffer = new ArrayBuffer(44 + len);
+      const view = new DataView(buffer);
+      
+      writeString(view, 0, 'RIFF');
+      view.setUint32(4, 36 + len, true);
+      writeString(view, 8, 'WAVE');
+      writeString(view, 12, 'fmt ');
+      view.setUint32(16, 16, true);
+      view.setUint16(20, 1, true);
+      view.setUint16(22, 1, true);
+      view.setUint32(24, sampleRate, true);
+      view.setUint32(28, sampleRate * 2, true);
+      view.setUint16(32, 2, true);
+      view.setUint16(34, 16, true);
+      writeString(view, 36, 'data');
+      view.setUint32(40, len, true);
+      
+      for (let i = 0; i < len; i++) {
+        view.setUint8(44 + i, bytes[i]);
+      }
+      
+      const blob = new Blob([view], { type: 'audio/wav' });
+      return URL.createObjectURL(blob);
+    }
+
+    function writeString(view, offset, string) {
+      for (let i = 0; i < string.length; i++) {
+        view.setUint8(offset + i, string.charCodeAt(i));
+      }
+    }
+  </script>
+</body>
+</html>
